@@ -1,10 +1,10 @@
 from flask import Flask, request, send_file
-from flask_cors import CORS
+from flask_cors import CORS   # ✅ Add this
 from gtts import gTTS
 import io
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)   # ✅ Add this
 
 @app.route('/generate_voice', methods=['POST'])
 def generate_voice():
@@ -17,8 +17,8 @@ def generate_voice():
     tts.write_to_fp(audio_stream)
     audio_stream.seek(0)
 
-    # Stream the audio directly without saving
+    # Return as mp3 stream
     return send_file(audio_stream, mimetype='audio/mp3')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

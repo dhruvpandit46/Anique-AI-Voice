@@ -1,28 +1,23 @@
 from flask import Flask, request, send_file
-from flask_cors import CORS
+from flask_cors import CORS  # ✅ enables cross-origin access
 from gtts import gTTS
 import io
 
 app = Flask(__name__)
-
-# ✅ Allow all origins (important for GitHub Pages)
-CORS(app, resources={r"/generate_voice": {"origins": "*"}})
+CORS(app, resources={r"/generate_voice": {"origins": "*"}})  # ✅ critical for CORS!
 
 @app.route('/generate_voice', methods=['POST'])
 def generate_voice():
-    data = request.get_json()
+    data = request.json
     text = data.get('text', '')
 
-    if not text:
-        return {"error": "No text provided"}, 400
-
+    # Convert to speech
     tts = gTTS(text, lang='en')
     audio_stream = io.BytesIO()
     tts.write_to_fp(audio_stream)
     audio_stream.seek(0)
 
-    # ✅ Return MP3 audio stream
-    return send_file(audio_stream, mimetype='audio/mpeg')
+    return send_file(audio_stream, mimetype='audio/mpeg')  # ✅ mp3 works too
 
 if __name__ == '__main__':
     app.run()
